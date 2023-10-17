@@ -5,17 +5,23 @@ import sys
 
 pygame.init()
 
-matriz = []
+matriz = []                                   #Creacion Matriz
 for i in range(50):
     vector = []
     for j in range(30):
         vector.append('.')
     matriz.append(vector)
 
-posibles_caminos = []  
-semaphore = threading.Semaphore()  
+posibles_caminos = []                         # Vector para almacenar los posibles caminos
+semaphore = threading.Semaphore()             # Semáforo para controlar el acceso al vector de caminos
+semaphore_arriba = threading.Semaphore(0)     # Semáforo para el movimiento hacia arriba
+semaphore_abajo = threading.Semaphore(0)      # Semáforo para el movimiento hacia abajo
+semaphore_izquierda = threading.Semaphore(0)  # Semáforo para el movimiento hacia la izquierda
+semaphore_derecha = threading.Semaphore(0)    # Semáforo para cel movimiento hacia la derecha
 
 pantalla = pygame.display.set_mode((1920, 1080))
+
+# Declaracion de los colores a utilizar en el laberinto
 
 ColorNegro = (0, 0, 0)
 ColorBlanco = (255, 255, 255)
@@ -23,6 +29,8 @@ ColorVerde = (0, 255, 0)
 ColorAzul = (0, 0, 255)
 ColorRojo = (255, 0, 0)
 ColorPared = ColorBlanco
+
+#Funcion para el movimiento hacia arriba
 
 def arriba(x, y):
     global matriz, posibles_caminos
@@ -44,6 +52,9 @@ def arriba(x, y):
 
     if i >= 0 and matriz[x][i] == 'V':
         print('Ventana encontrada en la matriz, posicion: (', x, ',', y, ')')
+                                                 
+
+#Funcion para el movimiento hacia abajo
 
 def abajo(x, y):
     global matriz, posibles_caminos
@@ -66,6 +77,8 @@ def abajo(x, y):
     if i < 30 and matriz[x][i] == 'V':
         print('Ventana encontrada en la matriz, posicion: (', x, ',', y, ')')
 
+#Funcion para el movimiento hacia la izquierda
+
 def izquierda(x, y):
     global matriz, posibles_caminos
     i = x
@@ -86,6 +99,8 @@ def izquierda(x, y):
 
     if i >= 0 and matriz[i][y] == 'V':
         print('Ventana encontrada en la matriz, posicion: (', x, ',', y, ')')
+
+#Funcion para el movimiento hacia la derecha
 
 def derecha(x, y):
     global matriz, posibles_caminos
@@ -110,6 +125,8 @@ def derecha(x, y):
 
 pygame.draw.rect(pantalla,ColorAzul,( (150,150,500,300)))
 
+#Agregar el archivo que contiene las paredes y la ventana dentro del laberinto
+
 archivo = open("C:/Users/crist/Desktop/Tarea Sist Op/Laberinto.txt","r")
 datos = archivo.readlines()
 for dato in datos:
@@ -127,8 +144,11 @@ for dato in datos:
 
 pygame.display.update()
 
+#Inicializacion del movimiento dentro del laberinto
+
 derecha(0,0)
 
+#Funcion de la hebra dentro del laberinto
 def hebra_laberinto():
     while True:
         with semaphore:
@@ -147,7 +167,6 @@ def hebra_laberinto():
             izquierda(x, y)
         elif direccion == 'Derecha':
             derecha(x, y)
-
 
 laberinto_thread = threading.Thread(target = hebra_laberinto)
 laberinto_thread.start()
