@@ -12,8 +12,8 @@ for i in range(50):
         vector.append('.')
     matriz.append(vector)
 
-posibles_caminos = []  # Vector para almacenar los posibles caminos
-semaphore = threading.Semaphore()  # Semáforo para controlar el acceso al vector de caminos
+posibles_caminos = []  
+semaphore = threading.Semaphore()  
 
 pantalla = pygame.display.set_mode((1920, 1080))
 
@@ -129,7 +129,6 @@ pygame.display.update()
 
 derecha(0,0)
 
-# Define una función que ejecutará la hebra
 def hebra_laberinto():
     while True:
         with semaphore:
@@ -152,8 +151,6 @@ def hebra_laberinto():
 
 laberinto_thread = threading.Thread(target = hebra_laberinto)
 laberinto_thread.start()
-
-
 
 while True:
     for event in pygame.event.get():
